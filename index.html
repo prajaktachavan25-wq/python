@@ -4,688 +4,463 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PyLearn — Learn Python Interactively</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0e1a;
-    --surface: #111827;
-    --card: #1a2235;
-    --border: #2a3850;
-    --accent: #00e5ff;
-    --accent2: #ff6b35;
-    --accent3: #a78bfa;
-    --green: #22d3a6;
-    --text: #e2eaf4;
-    --muted: #7a8fa8;
-    --font-mono: 'Space Mono', monospace;
-    --font-head: 'Syne', sans-serif;
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --card: #fafaf8;
+    --border: #e2e0d8;
+    --border2: #d0cdc3;
+    --accent: #2d6a4f;
+    --accent-light: #e8f4ee;
+    --accent2: #c45c2e;
+    --accent2-light: #fdf0ea;
+    --accent3: #6b4f9e;
+    --accent3-light: #f0ebfb;
+    --green: #2d6a4f;
+    --red: #c0392b;
+    --text: #1a1916;
+    --text2: #3d3b35;
+    --muted: #8a8578;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-sans: 'DM Sans', sans-serif;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* GRID BG */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,255,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); min-height: 100vh; overflow-x: hidden; }
 
   /* HEADER */
   header {
-    position: relative; z-index: 10;
+    position: sticky; top: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 1.2rem 2.5rem;
+    padding: 0 2.5rem; height: 56px;
     border-bottom: 1px solid var(--border);
-    background: rgba(10,14,26,.85);
-    backdrop-filter: blur(10px);
+    background: rgba(245,244,240,.94); backdrop-filter: blur(12px);
   }
-
-  .logo {
-    font-family: var(--font-head);
-    font-size: 1.5rem; font-weight: 800;
-    letter-spacing: -1px;
-  }
-  .logo span { color: var(--accent); }
-
-  .badge {
-    font-size: .65rem; background: var(--accent);
-    color: #000; padding: .15rem .45rem;
-    border-radius: 3px; font-weight: 700;
-    vertical-align: super; margin-left: 4px;
-    letter-spacing: .5px;
-  }
-
-  nav { display: flex; gap: 1rem; }
-  nav button {
-    background: none; border: 1px solid var(--border);
-    color: var(--muted); padding: .4rem .9rem;
-    border-radius: 6px; cursor: pointer;
-    font-family: var(--font-mono); font-size: .75rem;
-    transition: all .2s;
-  }
-  nav button:hover, nav button.active {
-    border-color: var(--accent); color: var(--accent);
-    background: rgba(0,229,255,.06);
-  }
+  .logo { font-family: var(--font-sans); font-size: 1.1rem; font-weight: 700; letter-spacing: -.4px; display: flex; align-items: center; gap: .5rem; }
+  .logo-mark { background: var(--text); color: var(--bg); padding: .17rem .42rem; border-radius: 5px; font-size: .82rem; font-family: var(--font-mono); font-weight: 600; }
+  .logo-sub { color: var(--muted); font-size: .82rem; font-weight: 400; }
+  .progress-pill { font-size: .7rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: .28rem .75rem; border-radius: 999px; display: flex; align-items: center; gap: .5rem; }
+  .progress-pill-bar { width: 56px; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-pill-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .5s ease; width: 0%; }
 
   /* HERO */
-  .hero {
-    position: relative; z-index: 2;
-    text-align: center; padding: 4rem 2rem 2rem;
-  }
-  .hero h1 {
-    font-family: var(--font-head); font-size: clamp(2.2rem, 5vw, 3.8rem);
-    font-weight: 800; line-height: 1.1; letter-spacing: -2px;
-    margin-bottom: 1rem;
-  }
-  .hero h1 em { color: var(--accent); font-style: normal; }
-  .hero p { color: var(--muted); font-size: .9rem; max-width: 500px; margin: 0 auto 2rem; line-height: 1.7; }
-
-  .progress-bar-wrap {
-    max-width: 400px; margin: 0 auto 1rem;
-    background: var(--border); border-radius: 999px; height: 6px; overflow: hidden;
-  }
-  .progress-bar {
-    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3));
-    border-radius: 999px; transition: width .6s ease;
-    width: 0%;
-  }
-  .progress-label { font-size: .7rem; color: var(--muted); margin-bottom: 2rem; }
+  .hero { position: relative; z-index: 2; padding: 3rem 2.5rem 2rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .hero-inner { max-width: 560px; }
+  .hero-eyebrow { font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: .7rem; display: flex; align-items: center; gap: .5rem; font-family: var(--font-sans); }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 18px; height: 2px; background: var(--accent); }
+  .hero h1 { font-family: var(--font-sans); font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 700; line-height: 1.15; letter-spacing: -.5px; margin-bottom: .7rem; }
+  .hero h1 em { font-style: normal; background: var(--text); color: var(--bg); padding: 0 .12em; border-radius: 4px; }
+  .hero p { color: var(--muted); font-family: var(--font-sans); font-size: .88rem; line-height: 1.7; max-width: 400px; }
+  .hero-stats { display: flex; gap: 2rem; margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .stat-num { font-family: var(--font-sans); font-size: 1.35rem; font-weight: 700; }
+  .stat-label { font-size: .68rem; color: var(--muted); margin-top: .1rem; font-family: var(--font-sans); }
 
   /* LAYOUT */
-  .main-layout {
-    position: relative; z-index: 2;
-    display: grid; grid-template-columns: 260px 1fr;
-    gap: 0; min-height: calc(100vh - 200px);
-  }
+  .main-layout { display: grid; grid-template-columns: 230px 1fr; min-height: calc(100vh - 56px); }
 
   /* SIDEBAR */
-  .sidebar {
-    border-right: 1px solid var(--border);
-    padding: 1.5rem 1rem;
-    background: rgba(17,24,39,.6);
-    overflow-y: auto;
-    max-height: calc(100vh - 130px);
-    position: sticky; top: 0;
-  }
-
-  .sidebar h3 {
-    font-family: var(--font-head); font-size: .7rem;
-    text-transform: uppercase; letter-spacing: 2px;
-    color: var(--muted); margin-bottom: 1rem; padding-left: .5rem;
-  }
-
-  .lesson-btn {
-    display: flex; align-items: center; gap: .6rem;
-    width: 100%; background: none; border: none;
-    color: var(--muted); padding: .6rem .8rem;
-    border-radius: 8px; cursor: pointer;
-    font-family: var(--font-mono); font-size: .75rem;
-    text-align: left; transition: all .2s;
-    margin-bottom: .2rem;
-  }
-  .lesson-btn:hover { background: rgba(0,229,255,.06); color: var(--text); }
-  .lesson-btn.active { background: rgba(0,229,255,.1); color: var(--accent); border: 1px solid rgba(0,229,255,.2); }
-  .lesson-btn.done { color: var(--green); }
-  .lesson-btn .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    border: 2px solid currentColor; flex-shrink: 0;
-  }
-  .lesson-btn.done .dot { background: var(--green); border-color: var(--green); }
-  .lesson-btn.active .dot { background: var(--accent); border-color: var(--accent); }
+  .sidebar { border-right: 1px solid var(--border); background: var(--surface); overflow-y: auto; position: sticky; top: 56px; height: calc(100vh - 56px); padding: 1.2rem .7rem; }
+  .sidebar-section { margin-bottom: 1.5rem; }
+  .sidebar-section-title { font-family: var(--font-sans); font-size: .63rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); padding: 0 .6rem .5rem; font-weight: 600; }
+  .lesson-btn { display: flex; align-items: center; gap: .6rem; width: 100%; background: none; border: none; color: var(--muted); padding: .48rem .65rem; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: .68rem; text-align: left; transition: all .15s; margin-bottom: .1rem; }
+  .lesson-btn:hover { background: var(--bg); color: var(--text2); }
+  .lesson-btn.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+  .lesson-btn.done { color: var(--text2); }
+  .lesson-num { font-size: .6rem; opacity: .55; min-width: 14px; }
+  .lesson-check { margin-left: auto; font-size: .72rem; opacity: 0; color: var(--accent); }
+  .lesson-btn.done .lesson-check { opacity: 1; }
 
   /* CONTENT */
-  .content { padding: 2rem 2.5rem; overflow-y: auto; }
+  .content { padding: 2.5rem 3rem; max-width: 760px; }
+  .lesson-tag { font-family: var(--font-sans); font-size: .64rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); font-weight: 600; margin-bottom: .55rem; display: block; }
+  .lesson-title { font-family: var(--font-sans); font-size: 1.65rem; font-weight: 700; letter-spacing: -.5px; line-height: 1.2; }
+  .lesson-desc { font-family: var(--font-sans); font-size: .86rem; color: var(--muted); margin-top: .45rem; line-height: 1.6; margin-bottom: 1.75rem; }
 
-  .lesson-header {
-    display: flex; align-items: flex-start; justify-content: space-between;
-    margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
-  }
-  .lesson-title { font-family: var(--font-head); font-size: 1.6rem; font-weight: 800; }
-  .lesson-tag {
-    background: rgba(167,139,250,.15); color: var(--accent3);
-    border: 1px solid rgba(167,139,250,.3);
-    padding: .25rem .7rem; border-radius: 999px; font-size: .7rem;
-  }
+  /* EXPLAIN */
+  .explain-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.3rem 1.4rem; margin-bottom: 1.4rem; }
+  .section-label { font-family: var(--font-sans); font-size: .65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); font-weight: 600; margin-bottom: .9rem; display: flex; align-items: center; gap: .5rem; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .explain-card p { font-family: var(--font-sans); font-size: .85rem; color: var(--text2); line-height: 1.8; margin-bottom: .55rem; }
+  .explain-card p:last-child { margin-bottom: 0; }
+  .explain-card code { font-family: var(--font-mono); background: rgba(45,106,79,.09); color: var(--accent); padding: .07rem .3rem; border-radius: 4px; font-size: .79rem; }
+  .explain-card ul { padding-left: 1.1rem; margin-bottom: .5rem; }
+  .explain-card li { font-family: var(--font-sans); font-size: .85rem; color: var(--text2); line-height: 2; }
+  .explain-card strong { color: var(--text); font-weight: 600; }
 
-  /* EXPLANATION CARD */
-  .explain-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
-    border-left: 3px solid var(--accent);
-  }
-  .explain-card h4 {
-    font-family: var(--font-head); color: var(--accent);
-    font-size: .85rem; margin-bottom: .8rem; font-weight: 600;
-  }
-  .explain-card p { font-size: .82rem; color: var(--text); line-height: 1.8; margin-bottom: .6rem; }
-  .explain-card code {
-    background: rgba(0,229,255,.1); color: var(--accent);
-    padding: .1rem .35rem; border-radius: 4px; font-size: .8rem;
-  }
-  .explain-card ul { padding-left: 1.2rem; }
-  .explain-card li { font-size: .82rem; color: var(--text); line-height: 2; }
-
-  /* CODE EDITOR */
-  .editor-wrap {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; overflow: hidden; margin-bottom: 1.2rem;
-  }
-  .editor-topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .7rem 1rem; background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-  .editor-dots { display: flex; gap: .4rem; }
-  .editor-dots span {
-    width: 10px; height: 10px; border-radius: 50%;
-  }
+  /* EDITOR */
+  .editor-wrap { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 1rem; box-shadow: var(--shadow-sm); }
+  .editor-topbar { display: flex; align-items: center; padding: .58rem 1rem; background: #1c1c1c; gap: .75rem; }
+  .editor-dots { display: flex; gap: .32rem; }
+  .editor-dots span { width: 9px; height: 9px; border-radius: 50%; }
   .editor-dots span:nth-child(1) { background: #ff5f57; }
   .editor-dots span:nth-child(2) { background: #febc2e; }
   .editor-dots span:nth-child(3) { background: #28c840; }
-  .editor-label { font-size: .7rem; color: var(--muted); }
-
-  .editor-btn-group { display: flex; gap: .5rem; }
-  .btn {
-    padding: .4rem .9rem; border-radius: 6px;
-    font-family: var(--font-mono); font-size: .72rem;
-    cursor: pointer; border: none; transition: all .2s;
-    font-weight: 700; letter-spacing: .5px;
-  }
-  .btn-run {
-    background: var(--accent); color: #000;
-  }
-  .btn-run:hover { background: #00c8e0; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0,229,255,.3); }
-  .btn-reset {
-    background: none; border: 1px solid var(--border);
-    color: var(--muted);
-  }
-  .btn-reset:hover { border-color: var(--accent2); color: var(--accent2); }
-
-  textarea.code-area {
-    width: 100%; min-height: 160px;
-    background: #0d1220; color: #c9d9f0;
-    border: none; outline: none; resize: vertical;
-    font-family: var(--font-mono); font-size: .82rem;
-    line-height: 1.7; padding: 1.2rem 1rem;
-    tab-size: 4; white-space: pre;
-  }
+  .editor-filename { font-size: .66rem; color: rgba(255,255,255,.35); font-family: var(--font-mono); }
+  .editor-btn-group { display: flex; gap: .4rem; margin-left: auto; }
+  .btn { padding: .3rem .75rem; border-radius: 5px; font-family: var(--font-mono); font-size: .67rem; cursor: pointer; border: none; transition: all .15s; font-weight: 600; }
+  .btn-run { background: var(--accent); color: #fff; }
+  .btn-run:hover { background: #235c42; }
+  .btn-reset { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.55); }
+  .btn-reset:hover { background: rgba(255,255,255,.14); color: #fff; }
+  textarea.code-area { width: 100%; min-height: 145px; background: #1c1c1c; color: #d4d0c8; border: none; outline: none; resize: vertical; font-family: var(--font-mono); font-size: .81rem; line-height: 1.75; padding: 1.1rem 1.2rem; tab-size: 4; }
 
   /* OUTPUT */
-  .output-panel {
-    background: #070c14; border: 1px solid var(--border);
-    border-radius: 10px; padding: 1rem 1.2rem;
-    font-family: var(--font-mono); font-size: .78rem;
-    min-height: 60px; margin-bottom: 1.5rem; line-height: 1.8;
-  }
-  .output-panel .out-label {
-    font-size: .65rem; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 2px; margin-bottom: .5rem;
-  }
-  .out-success { color: var(--green); }
-  .out-error { color: #f87171; }
-  .out-pending { color: var(--muted); font-style: italic; }
+  .output-panel { background: #f9f8f5; border: 1px solid var(--border); border-radius: 9px; padding: .85rem 1.1rem; font-family: var(--font-mono); font-size: .77rem; min-height: 50px; margin-bottom: 1.5rem; line-height: 1.8; }
+  .out-label { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: .35rem; font-family: var(--font-sans); font-weight: 600; }
+  .out-success { color: var(--accent); }
+  .out-error { color: var(--red); }
+  .out-pending { color: var(--muted); font-style: italic; font-size: .74rem; }
 
   /* QUIZ */
-  .quiz-section {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 1.5rem;
-    border-left: 3px solid var(--accent2);
-  }
-  .quiz-section h4 {
-    font-family: var(--font-head); color: var(--accent2);
-    font-size: .85rem; margin-bottom: 1rem; font-weight: 600;
-  }
-  .quiz-q { font-size: .83rem; color: var(--text); margin-bottom: 1rem; line-height: 1.6; }
-  .quiz-options { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
-  .quiz-opt {
-    background: none; border: 1px solid var(--border);
-    color: var(--text); padding: .6rem 1rem;
-    border-radius: 8px; cursor: pointer;
-    font-family: var(--font-mono); font-size: .78rem;
-    text-align: left; transition: all .2s;
-  }
-  .quiz-opt:hover { border-color: var(--accent3); color: var(--accent3); background: rgba(167,139,250,.06); }
-  .quiz-opt.correct { border-color: var(--green); color: var(--green); background: rgba(34,211,166,.08); }
-  .quiz-opt.wrong { border-color: #f87171; color: #f87171; background: rgba(248,113,113,.08); }
-  .quiz-feedback { font-size: .8rem; margin-top: .5rem; min-height: 1.2em; }
+  .quiz-section { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.3rem 1.4rem; }
+  .quiz-q { font-family: var(--font-sans); font-size: .87rem; color: var(--text); margin-bottom: .9rem; line-height: 1.6; font-weight: 500; }
+  .quiz-options { display: flex; flex-direction: column; gap: .42rem; margin-bottom: .7rem; }
+  .quiz-opt { background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: .52rem .95rem; border-radius: 7px; cursor: pointer; font-family: var(--font-mono); font-size: .74rem; text-align: left; transition: all .15s; }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .quiz-opt.correct { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .quiz-opt.wrong { border-color: var(--red); color: var(--red); background: #fdf3f2; }
+  .quiz-feedback { font-family: var(--font-sans); font-size: .79rem; min-height: 1.3em; }
 
-  /* NEXT BUTTON */
-  .btn-next {
-    display: inline-block; margin-top: 1.5rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    color: #000; padding: .6rem 1.5rem; border-radius: 8px;
-    font-family: var(--font-mono); font-size: .8rem;
-    font-weight: 700; cursor: pointer; border: none;
-    transition: all .25s; letter-spacing: .5px;
-  }
-  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,229,255,.25); }
-  .btn-next:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  /* NEXT */
+  .btn-next { display: inline-flex; align-items: center; gap: .4rem; margin-top: 1.5rem; background: var(--text); color: var(--bg); padding: .6rem 1.4rem; border-radius: 8px; font-family: var(--font-sans); font-size: .84rem; font-weight: 600; cursor: pointer; border: none; transition: all .2s; }
+  .btn-next:hover:not(:disabled) { background: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(45,106,79,.22); }
+  .btn-next:disabled { opacity: .3; cursor: not-allowed; transform: none; }
 
   /* CONGRATS */
-  .congrats {
-    text-align: center; padding: 3rem 1rem;
-    display: none;
-  }
-  .congrats.show { display: block; }
-  .congrats .trophy { font-size: 4rem; margin-bottom: 1rem; }
-  .congrats h2 { font-family: var(--font-head); font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
-  .congrats p { color: var(--muted); font-size: .85rem; }
+  .congrats { text-align: center; padding: 4rem 1rem; }
+  .congrats .trophy { font-size: 3.2rem; margin-bottom: 1rem; }
+  .congrats h2 { font-family: var(--font-sans); font-size: 1.9rem; font-weight: 700; margin-bottom: .5rem; }
+  .congrats p { color: var(--muted); font-family: var(--font-sans); font-size: .87rem; line-height: 1.7; }
+  .congrats-stats { display: inline-flex; gap: 2rem; margin: 2rem 0; padding: 1.3rem 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+  .congrats-stat-n { font-family: var(--font-sans); font-size: 1.4rem; font-weight: 700; }
+  .congrats-stat-l { font-size: .68rem; color: var(--muted); margin-top: .15rem; }
 
-  /* RESPONSIVE */
-  @media (max-width: 700px) {
+  @media (max-width: 720px) {
     .main-layout { grid-template-columns: 1fr; }
-    .sidebar { max-height: none; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
-    .content { padding: 1.5rem 1rem; }
-    header { padding: 1rem; }
-    nav button span { display: none; }
+    .sidebar { height: auto; position: relative; top: 0; }
+    .content { padding: 1.5rem 1.2rem; }
+    header { padding: 0 1rem; }
+    .hero { padding: 2rem 1.2rem 1.5rem; }
   }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Py<span>Learn</span><span class="badge">BETA</span></div>
-  <nav>
-    <button class="active" id="tab-lessons">📚 <span>Lessons</span></button>
-    <button id="tab-about">⚡ <span>About</span></button>
-  </nav>
+  <div class="logo">
+    <span class="logo-mark">py</span>
+    Learn <span class="logo-sub">/ interactive</span>
+  </div>
+  <div class="progress-pill">
+    <div class="progress-pill-bar"><div class="progress-pill-fill" id="progressFill"></div></div>
+    <span id="progressLabel">0 / 12</span>
+  </div>
 </header>
 
 <div class="hero">
-  <h1>Learn <em>Python</em><br>by doing it.</h1>
-  <p>Interactive lessons with a live code editor. Write real Python, see instant results, test your knowledge.</p>
-  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
-  <div class="progress-label" id="progressLabel">0 / 8 lessons completed</div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Python for beginners</div>
+    <h1>Learn <em>Python</em><br>by writing it.</h1>
+    <p>12 interactive lessons with a live code editor. No setup needed — just read, type, and run.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">12</div><div class="stat-label">lessons</div></div>
+      <div class="stat"><div class="stat-num">12</div><div class="stat-label">quizzes</div></div>
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">installs needed</div></div>
+    </div>
+  </div>
 </div>
 
 <div class="main-layout">
-  <aside class="sidebar">
-    <h3>Curriculum</h3>
-    <div id="lessonList"></div>
-  </aside>
+  <aside class="sidebar" id="sidebar"></aside>
   <main class="content" id="mainContent"></main>
 </div>
 
 <script>
-// ── LESSONS DATA ───────────────────────────────────────────────
 const lessons = [
   {
     title: "Hello, World!",
     tag: "Basics",
-    explain: `
-      <p>Python is a beginner-friendly, powerful programming language. Every Python journey starts with <code>print()</code> — the function that displays output.</p>
-      <p>The <code>print()</code> function takes text (called a <em>string</em>) inside quotes and shows it on screen.</p>
-      <ul>
-        <li>Use double <code>"..."</code> or single <code>'...'</code> quotes for strings</li>
-        <li>You can print multiple items separated by commas</li>
-        <li>Each <code>print()</code> outputs on a new line</li>
-      </ul>
-    `,
-    starter: `# Your first Python program!\nprint("Hello, World!")\nprint("My name is Student")\nprint("I am learning Python!")`,
-    expected: ["Hello, World!", "My name is Student", "I am learning Python!"],
-    quiz: {
-      q: "Which function is used to display output in Python?",
-      opts: ["display()", "print()", "show()", "output()"],
-      ans: 1,
-      feedback: "✅ Correct! print() is the standard output function in Python.",
-      wrong: "❌ Not quite. The correct answer is print()."
-    }
+    desc: "Your very first Python program — displaying text on screen.",
+    explain: `<p>Every Python journey begins with <code>print()</code> — the function that shows output. Text inside quotes is called a <strong>string</strong>.</p>
+      <ul><li>Use double <code>"..."</code> or single <code>'...'</code> quotes</li>
+      <li>Each <code>print()</code> call outputs on its own line</li>
+      <li>Print multiple values: <code>print("hi", "there")</code></li></ul>`,
+    starter: `# Your first Python program!\nprint("Hello, World!")\nprint("My name is Student")\nprint("I love Python")`,
+    expected: ["Hello, World!", "My name is Student", "I love Python"],
+    quiz: { q: "Which function displays output in Python?", opts: ["display()", "print()", "show()", "echo()"], ans: 1, feedback: "✓ Correct — print() is Python's standard output function.", wrong: "✗ The correct answer is print()." }
   },
   {
     title: "Variables",
     tag: "Basics",
-    explain: `
-      <p>Variables are containers that store data. In Python, you create a variable by simply assigning a value with <code>=</code>.</p>
-      <p>Python figures out the type automatically — this is called <em>dynamic typing</em>.</p>
-      <ul>
-        <li><code>name = "Alice"</code> — a string (text)</li>
-        <li><code>age = 20</code> — an integer (whole number)</li>
-        <li><code>gpa = 3.8</code> — a float (decimal number)</li>
-      </ul>
-      <p>Variable names must start with a letter or underscore, and cannot contain spaces.</p>
-    `,
-    starter: `# Create variables and print them\nname = "Alice"\nage = 20\ngpa = 3.8\n\nprint("Name:", name)\nprint("Age:", age)\nprint("GPA:", gpa)`,
-    expected: ["Name: Alice", "Age: 20", "GPA: 3.8"],
-    quiz: {
-      q: "What symbol is used to assign a value to a variable in Python?",
-      opts: ["==", "->", "=", ":="],
-      ans: 2,
-      feedback: "✅ Correct! = is the assignment operator.",
-      wrong: "❌ Nope! = is used for assignment. == is for comparison."
-    }
+    desc: "Store data in named containers to use and reuse it.",
+    explain: `<p>A variable is a named container for data. Use <code>=</code> to assign a value. Python detects the type automatically — called <strong>dynamic typing</strong>.</p>
+      <ul><li><code>name = "Alice"</code> — string (text)</li>
+      <li><code>age = 20</code> — integer (whole number)</li>
+      <li><code>height = 1.75</code> — float (decimal)</li></ul>
+      <p>Names are case-sensitive: <code>Name</code> and <code>name</code> are different variables.</p>`,
+    starter: `name = "Alice"\nage = 20\nheight = 1.75\n\nprint("Name:", name)\nprint("Age:", age)\nprint("Height:", height)`,
+    expected: ["Name: Alice", "Age: 20", "Height: 1.75"],
+    quiz: { q: "What symbol assigns a value to a variable?", opts: ["==", "->", "=", ":="], ans: 2, feedback: "✓ Correct — = is the assignment operator.", wrong: "✗ Use = for assignment. == is used for comparison." }
   },
   {
     title: "Data Types",
     tag: "Basics",
-    explain: `
-      <p>Python has several core data types. The <code>type()</code> function tells you what type a value is.</p>
-      <ul>
-        <li><code>str</code> — text: <code>"hello"</code></li>
-        <li><code>int</code> — whole numbers: <code>42</code></li>
-        <li><code>float</code> — decimals: <code>3.14</code></li>
-        <li><code>bool</code> — True or False</li>
-      </ul>
-      <p>You can convert between types: <code>int("5")</code> turns the string "5" into the number 5. This is called <em>type casting</em>.</p>
-    `,
-    starter: `# Explore data types\nx = "Python"\ny = 100\nz = 3.14\nflag = True\n\nprint(type(x))\nprint(type(y))\nprint(type(z))\nprint(type(flag))`,
+    desc: "Understand the different kinds of data Python can handle.",
+    explain: `<p>Python has four core built-in types. Use <code>type()</code> to inspect any value.</p>
+      <ul><li><code>str</code> — text: <code>"hello"</code></li>
+      <li><code>int</code> — whole numbers: <code>42</code></li>
+      <li><code>float</code> — decimals: <code>3.14</code></li>
+      <li><code>bool</code> — <code>True</code> or <code>False</code></li></ul>
+      <p>Convert between types: <code>int("5")</code>, <code>str(42)</code>, <code>float("3.14")</code></p>`,
+    starter: `x = "Python"\ny = 100\nz = 3.14\nflag = True\n\nprint(type(x))\nprint(type(y))\nprint(type(z))\nprint(type(flag))`,
     expected: ["<class 'str'>", "<class 'int'>", "<class 'float'>", "<class 'bool'>"],
-    quiz: {
-      q: "What is the data type of: x = 3.14",
-      opts: ["int", "str", "float", "double"],
-      ans: 2,
-      feedback: "✅ Correct! 3.14 is a float — a decimal number.",
-      wrong: "❌ Close! Decimal numbers in Python are called float."
-    }
+    quiz: { q: "What is the type of 3.14 in Python?", opts: ["int", "str", "float", "double"], ans: 2, feedback: "✓ Correct — decimal numbers are float.", wrong: "✗ Decimal numbers are called float in Python." }
+  },
+  {
+    title: "String Operations",
+    tag: "Strings",
+    desc: "Manipulate text with Python's built-in string methods.",
+    explain: `<p>Strings have many useful methods, called with a dot: <code>text.upper()</code>.</p>
+      <ul><li><code>.upper()</code> / <code>.lower()</code> — change case</li>
+      <li><code>len(text)</code> — count characters</li>
+      <li><code>.replace("a","b")</code> — swap substrings</li>
+      <li>Concatenation: <code>"Hello" + " " + "World"</code></li></ul>`,
+    starter: `msg = "hello, python!"\n\nprint(msg.upper())\nprint(msg.replace("python", "world"))\nprint(len(msg))\nprint("py" + "thon")`,
+    expected: ["HELLO, PYTHON!", "hello, world!", "14", "python"],
+    quiz: { q: "Which method converts a string to uppercase?", opts: [".capitalize()", ".upper()", ".toUpper()", ".big()"], ans: 1, feedback: "✓ Correct — .upper() converts all characters to uppercase.", wrong: "✗ Use .upper() to convert a string to uppercase." }
   },
   {
     title: "If / Else",
     tag: "Control Flow",
-    explain: `
-      <p>Conditional statements let your program make decisions. Use <code>if</code>, <code>elif</code>, and <code>else</code>.</p>
-      <p>Python uses <strong>indentation</strong> (4 spaces or 1 tab) to define code blocks — this is unique to Python!</p>
-      <ul>
-        <li><code>if condition:</code> — runs if condition is True</li>
-        <li><code>elif condition:</code> — checked if previous if was False</li>
-        <li><code>else:</code> — runs if nothing above was True</li>
-      </ul>
-    `,
-    starter: `# If/else decision making\nscore = 75\n\nif score >= 90:\n    print("Grade: A")\nelif score >= 75:\n    print("Grade: B")\nelif score >= 60:\n    print("Grade: C")\nelse:\n    print("Grade: F")\n\nprint("Done!")`,
+    desc: "Make decisions in your code using conditional statements.",
+    explain: `<p>Conditionals let your program choose paths. Python uses <strong>indentation</strong> (4 spaces) to define blocks.</p>
+      <ul><li><code>if condition:</code> — runs when True</li>
+      <li><code>elif condition:</code> — checked if previous was False</li>
+      <li><code>else:</code> — fallback when nothing matched</li></ul>
+      <p>Operators: <code>==</code> <code>!=</code> <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></p>`,
+    starter: `score = 75\n\nif score >= 90:\n    print("Grade: A")\nelif score >= 75:\n    print("Grade: B")\nelif score >= 60:\n    print("Grade: C")\nelse:\n    print("Grade: F")\n\nprint("Done!")`,
     expected: ["Grade: B", "Done!"],
-    quiz: {
-      q: "What does Python use to define code blocks inside if/else?",
-      opts: ["Curly braces {}", "Parentheses ()", "Indentation", "Square brackets []"],
-      ans: 2,
-      feedback: "✅ Correct! Python uses indentation — this makes the code clean and readable.",
-      wrong: "❌ Python is unique — it uses indentation (spaces/tabs) instead of brackets."
-    }
+    quiz: { q: "What does Python use to define blocks inside if/else?", opts: ["Curly braces {}", "Parentheses ()", "Indentation", "Semicolons ;"], ans: 2, feedback: "✓ Correct — Python uses indentation instead of braces.", wrong: "✗ Python uses indentation (spaces/tabs) to define code blocks." }
   },
   {
     title: "For Loops",
     tag: "Loops",
-    explain: `
-      <p>A <code>for</code> loop lets you repeat code a set number of times or iterate over items in a sequence.</p>
-      <p><code>range(n)</code> generates numbers from 0 up to (but not including) n.</p>
-      <ul>
-        <li><code>range(5)</code> → 0, 1, 2, 3, 4</li>
-        <li><code>range(1, 6)</code> → 1, 2, 3, 4, 5</li>
-        <li><code>range(0, 10, 2)</code> → 0, 2, 4, 6, 8</li>
-      </ul>
-      <p>You can also loop directly over a list: <code>for item in my_list:</code></p>
-    `,
-    starter: `# For loops\nfor i in range(1, 6):\n    print("Count:", i)\n\nfruits = ["apple", "banana", "cherry"]\nfor fruit in fruits:\n    print(fruit)`,
-    expected: ["Count: 1", "Count: 2", "Count: 3", "Count: 4", "Count: 5", "apple", "banana", "cherry"],
-    quiz: {
-      q: "What does range(3) produce?",
-      opts: ["1, 2, 3", "0, 1, 2, 3", "0, 1, 2", "1, 2"],
-      ans: 2,
-      feedback: "✅ Correct! range(3) gives 0, 1, 2 — it starts at 0 and stops before 3.",
-      wrong: "❌ range(3) produces 0, 1, 2 — it starts at 0 and stops before the given number."
-    }
+    desc: "Repeat code a set number of times or over a sequence.",
+    explain: `<p>A <code>for</code> loop iterates over a sequence. <code>range()</code> generates number sequences.</p>
+      <ul><li><code>range(5)</code> → 0, 1, 2, 3, 4</li>
+      <li><code>range(1, 6)</code> → 1, 2, 3, 4, 5</li>
+      <li><code>range(0, 10, 2)</code> → 0, 2, 4, 6, 8</li></ul>
+      <p>Loop over any sequence: <code>for item in my_list:</code></p>`,
+    starter: `for i in range(1, 6):\n    print("Count:", i)\n\nfruits = ["apple", "banana", "cherry"]\nfor fruit in fruits:\n    print(fruit)`,
+    expected: ["Count: 1","Count: 2","Count: 3","Count: 4","Count: 5","apple","banana","cherry"],
+    quiz: { q: "What does range(3) produce?", opts: ["1, 2, 3", "0, 1, 2, 3", "0, 1, 2", "1, 2"], ans: 2, feedback: "✓ Correct — range(3) gives 0, 1, 2.", wrong: "✗ range(3) produces 0, 1, 2 — starts at 0, stops before 3." }
+  },
+  {
+    title: "While Loops",
+    tag: "Loops",
+    desc: "Repeat code as long as a condition stays true.",
+    explain: `<p>A <code>while</code> loop keeps running while its condition is <code>True</code>. Always update the variable or you'll get an infinite loop!</p>
+      <ul><li><code>break</code> — exits the loop immediately</li>
+      <li><code>continue</code> — skips to the next iteration</li></ul>
+      <p><strong>Tip:</strong> Use <code>for</code> when count is known; use <code>while</code> when it's not.</p>`,
+    starter: `count = 1\nwhile count <= 5:\n    print("Step", count)\n    count = count + 1\n\nprint("Loop finished!")`,
+    expected: ["Step 1","Step 2","Step 3","Step 4","Step 5","Loop finished!"],
+    quiz: { q: "What keyword immediately exits a loop?", opts: ["exit", "stop", "break", "end"], ans: 2, feedback: "✓ Correct — break exits the loop immediately.", wrong: "✗ Use break to exit a loop immediately." }
   },
   {
     title: "Functions",
     tag: "Functions",
-    explain: `
-      <p>Functions let you bundle reusable code. Define them with <code>def</code>, name them, list parameters in parentheses, and indent the body.</p>
-      <p>A <code>return</code> statement sends a value back to the caller.</p>
-      <ul>
-        <li><code>def greet(name):</code> — function with one parameter</li>
-        <li>Call it: <code>greet("Alice")</code></li>
-        <li>Return values: <code>return result</code></li>
-      </ul>
-      <p>Functions help you avoid repeating yourself — the <strong>DRY</strong> principle: Don't Repeat Yourself.</p>
-    `,
-    starter: `# Define and call functions\ndef greet(name):\n    return "Hello, " + name + "!"\n\ndef add(a, b):\n    return a + b\n\nprint(greet("Alice"))\nprint(greet("Bob"))\nprint("Sum:", add(5, 3))`,
-    expected: ["Hello, Alice!", "Hello, Bob!", "Sum: 8"],
-    quiz: {
-      q: "What keyword is used to define a function in Python?",
-      opts: ["function", "func", "def", "define"],
-      ans: 2,
-      feedback: "✅ Correct! def is short for 'define'.",
-      wrong: "❌ Python uses def (short for define) to create functions."
-    }
+    desc: "Bundle reusable logic into named, callable blocks.",
+    explain: `<p>Functions avoid repetition — the <strong>DRY</strong> principle (Don't Repeat Yourself). Define with <code>def</code>, call by name.</p>
+      <ul><li>Parameters are placeholders: <code>def greet(name):</code></li>
+      <li><code>return</code> sends a value back to the caller</li>
+      <li>Functions without <code>return</code> give back <code>None</code></li></ul>`,
+    starter: `def greet(name):\n    return "Hello, " + name + "!"\n\ndef add(a, b):\n    return a + b\n\nprint(greet("Alice"))\nprint(greet("Bob"))\nprint("Sum:", add(5, 3))`,
+    expected: ["Hello, Alice!","Hello, Bob!","Sum: 8"],
+    quiz: { q: "What keyword defines a function in Python?", opts: ["function", "func", "def", "define"], ans: 2, feedback: "✓ Correct — def is short for define.", wrong: "✗ Python uses def to define functions." }
   },
   {
     title: "Lists",
     tag: "Data Structures",
-    explain: `
-      <p>A <strong>list</strong> stores multiple items in a single variable. Lists are ordered, changeable, and allow duplicates.</p>
-      <ul>
-        <li>Create: <code>nums = [1, 2, 3, 4, 5]</code></li>
-        <li>Access by index (starts at 0): <code>nums[0]</code> → 1</li>
-        <li>Add item: <code>nums.append(6)</code></li>
-        <li>Remove item: <code>nums.remove(3)</code></li>
-        <li>Length: <code>len(nums)</code></li>
-      </ul>
-      <p>Lists can hold mixed types: <code>[1, "hello", True, 3.14]</code></p>
-    `,
-    starter: `# Working with lists\ncolors = ["red", "green", "blue"]\n\nprint("First:", colors[0])\nprint("Last:", colors[-1])\nprint("Length:", len(colors))\n\ncolors.append("yellow")\nprint("After append:", colors)\n\ncolors.remove("green")\nprint("After remove:", colors)`,
-    expected: ["First: red", "Last: blue", "Length: 3", "After append: ['red', 'green', 'blue', 'yellow']", "After remove: ['red', 'blue', 'yellow']"],
-    quiz: {
-      q: "What index does the FIRST item in a Python list have?",
-      opts: ["1", "0", "-1", "None"],
-      ans: 1,
-      feedback: "✅ Correct! Python lists are zero-indexed, so the first item is at index 0.",
-      wrong: "❌ Python (like most languages) starts indexing at 0, so the first item is nums[0]."
-    }
+    desc: "Store ordered, changeable collections of items.",
+    explain: `<p>A <strong>list</strong> stores multiple values in order. Create with square brackets.</p>
+      <ul><li>Index starts at <code>0</code>: <code>items[0]</code> = first item</li>
+      <li>Negative index: <code>items[-1]</code> = last item</li>
+      <li><code>.append(x)</code> — add to end</li>
+      <li><code>.remove(x)</code> — remove first match</li>
+      <li><code>len(list)</code> — number of items</li></ul>`,
+    starter: `colors = ["red", "green", "blue"]\n\nprint("First:", colors[0])\nprint("Last:", colors[-1])\nprint("Length:", len(colors))\n\ncolors.append("yellow")\nprint("After append:", colors)\n\ncolors.remove("green")\nprint("After remove:", colors)`,
+    expected: ["First: red","Last: blue","Length: 3","After append: ['red', 'green', 'blue', 'yellow']","After remove: ['red', 'blue', 'yellow']"],
+    quiz: { q: "What index does the FIRST item in a list have?", opts: ["1", "0", "-1", "None"], ans: 1, feedback: "✓ Correct — Python lists are zero-indexed.", wrong: "✗ Python starts at 0, so the first item is list[0]." }
   },
   {
     title: "Dictionaries",
     tag: "Data Structures",
-    explain: `
-      <p>A <strong>dictionary</strong> stores data as key-value pairs — like a real dictionary where you look up a word (key) to find its meaning (value).</p>
-      <ul>
-        <li>Create: <code>person = {"name": "Alice", "age": 20}</code></li>
-        <li>Access: <code>person["name"]</code> → "Alice"</li>
-        <li>Add/update: <code>person["city"] = "Mumbai"</code></li>
-        <li>Keys: <code>person.keys()</code></li>
-        <li>Values: <code>person.values()</code></li>
-      </ul>
-      <p>Dictionaries are incredibly useful for representing real-world objects!</p>
-    `,
-    starter: `# Dictionaries\nstudent = {\n    "name": "Raj",\n    "age": 19,\n    "grade": "A"\n}\n\nprint("Name:", student["name"])\nprint("Age:", student["age"])\nprint("Grade:", student["grade"])\n\nstudent["city"] = "Pune"\nprint("City:", student["city"])\nprint("Keys:", list(student.keys()))`,
-    expected: ["Name: Raj", "Age: 19", "Grade: A", "City: Pune", "Keys: ['name', 'age', 'grade', 'city']"],
-    quiz: {
-      q: "How do you access the value for key 'age' in a dictionary called 'student'?",
-      opts: ["student.age", "student(age)", "student[age]", "student['age']"],
-      ans: 3,
-      feedback: "✅ Correct! Use square brackets with the key in quotes: student['age'].",
-      wrong: "❌ To access a dictionary value, use student['age'] with the key in quotes inside square brackets."
-    }
+    desc: "Store and look up data using key-value pairs.",
+    explain: `<p>A <strong>dictionary</strong> maps keys to values. Think of it like a real dictionary: look up a word (key) to find its meaning (value).</p>
+      <ul><li>Create: <code>{"name": "Alice", "age": 20}</code></li>
+      <li>Access: <code>d["name"]</code></li>
+      <li>Add/update: <code>d["city"] = "Pune"</code></li>
+      <li><code>.keys()</code> and <code>.values()</code></li></ul>`,
+    starter: `student = {\n    "name": "Raj",\n    "age": 19,\n    "grade": "A"\n}\n\nprint("Name:", student["name"])\nprint("Age:", student["age"])\nprint("Grade:", student["grade"])\n\nstudent["city"] = "Pune"\nprint("City:", student["city"])\nprint("Keys:", list(student.keys()))`,
+    expected: ["Name: Raj","Age: 19","Grade: A","City: Pune","Keys: ['name', 'age', 'grade', 'city']"],
+    quiz: { q: "How do you access key 'age' in a dict called 'student'?", opts: ["student.age", "student(age)", "student[age]", "student['age']"], ans: 3, feedback: "✓ Correct — use square brackets with the key in quotes.", wrong: "✗ Use student['age'] — square brackets with a string key." }
+  },
+  {
+    title: "List Comprehensions",
+    tag: "Advanced",
+    desc: "Build lists in a single, elegant line of code.",
+    explain: `<p>A <strong>list comprehension</strong> is a compact way to create a list, replacing a multi-line loop with one expression.</p>
+      <p>Syntax: <code>[expression for item in iterable]</code></p>
+      <p>With filter: <code>[expression for item in iterable if condition]</code></p>
+      <ul><li><code>[x*2 for x in range(5)]</code> → [0, 2, 4, 6, 8]</li>
+      <li><code>[x for x in range(10) if x % 2 == 0]</code> → even numbers</li></ul>`,
+    starter: `squares = [x * x for x in range(1, 6)]\nprint(squares)\n\nevens = [x for x in range(10) if x % 2 == 0]\nprint(evens)\n\nwords = ["hello", "world", "python"]\nupper = [w.upper() for w in words]\nprint(upper)`,
+    expected: ["[1, 4, 9, 16, 25]","[0, 2, 4, 6, 8]","['HELLO', 'WORLD', 'PYTHON']"],
+    quiz: { q: "What does [x*2 for x in range(3)] produce?", opts: ["[1, 2, 3]", "[0, 2, 4]", "[2, 4, 6]", "[0, 1, 2]"], ans: 1, feedback: "✓ Correct — range(3) gives 0,1,2; doubled: [0, 2, 4].", wrong: "✗ range(3) gives 0,1,2. Multiply each by 2 → [0, 2, 4]." }
+  },
+  {
+    title: "Error Handling",
+    tag: "Advanced",
+    desc: "Handle errors gracefully so your program doesn't crash.",
+    explain: `<p>Errors are called <strong>exceptions</strong>. Use <code>try / except</code> to handle them gracefully instead of crashing.</p>
+      <ul><li><code>try:</code> — code that might fail</li>
+      <li><code>except ZeroDivisionError:</code> — catch specific errors</li>
+      <li><code>except Exception as e:</code> — catch any error</li>
+      <li><code>finally:</code> — always runs, error or not</li></ul>
+      <p>Common exceptions: <code>ZeroDivisionError</code>, <code>TypeError</code>, <code>ValueError</code>, <code>IndexError</code></p>`,
+    starter: `try:\n    result = 10 / 2\n    print("Result:", result)\nexcept ZeroDivisionError:\n    print("Cannot divide by zero!")\nfinally:\n    print("Done.")\n\ntry:\n    x = "5" + 3\nexcept TypeError:\n    print("Type error caught!")`,
+    expected: ["Result: 5.0","Done.","Type error caught!"],
+    quiz: { q: "Which block always runs whether or not an exception occurred?", opts: ["except", "else", "finally", "always"], ans: 2, feedback: "✓ Correct — finally always runs, regardless of errors.", wrong: "✗ The finally block always executes, error or not." }
   }
 ];
 
-// ── STATE ──────────────────────────────────────────────────────
-const state = {
-  current: 0,
-  done: new Set(),
-  quizAnswered: false
-};
+const state = { current: 0, done: new Set(), quizAnswered: false };
 
-// ── PYTHON INTERPRETER (Simple) ────────────────────────────────
 function runPython(code) {
-  const lines = [];
   const output = [];
-
-  // Intercept print
   const printFn = (...args) => {
     output.push(args.map(a => {
-      if (Array.isArray(a)) return JSON.stringify(a).replace(/"/g, "'");
       if (a === null) return 'None';
       if (a === true) return 'True';
       if (a === false) return 'False';
+      if (Array.isArray(a)) return '[' + a.map(i => typeof i === 'string' ? `'${i}'` : String(i)).join(', ') + ']';
       return String(a);
     }).join(' '));
   };
 
-  // Transform Python -> JS
   let js = code
-    // comments
     .replace(/#[^\n]*/g, '')
-    // print(...)
     .replace(/print\(([^)]*(?:\([^)]*\)[^)]*)*)\)/g, '__print($1)')
-    // True/False/None
-    .replace(/\bTrue\b/g, 'true')
-    .replace(/\bFalse\b/g, 'false')
-    .replace(/\bNone\b/g, 'null')
-    // type()
-    .replace(/type\(([^)]+)\)/g, '__type($1)')
-    // len()
-    .replace(/len\(([^)]+)\)/g, '$1.length')
-    // list.append
-    .replace(/(\w+)\.append\(([^)]+)\)/g, '$1.push($2)')
-    // list.remove
-    .replace(/(\w+)\.remove\(([^)]+)\)/g, (m, lst, val) => `__removeItem(${lst}, ${val})`)
-    // dict.keys()
-    .replace(/(\w+)\.keys\(\)/g, 'Object.keys($1)')
-    // dict.values()
-    .replace(/(\w+)\.values\(\)/g, 'Object.values($1)')
-    // list([...])
-    .replace(/list\(([^)]+)\)/g, 'Array.from($1)')
-    // range(a,b,c)
-    .replace(/range\((\d+),\s*(\d+),\s*(\d+)\)/g, '__range($1,$2,$3)')
-    .replace(/range\((\d+),\s*(\d+)\)/g, '__range($1,$2)')
-    .replace(/range\((\d+)\)/g, '__range(0,$1)')
-    // f-strings (basic)
-    .replace(/f"([^"]*)"/g, (m, s) => '`' + s.replace(/\{([^}]+)\}/g, '${$1}') + '`')
-    .replace(/f'([^']*)'/g, (m, s) => '`' + s.replace(/\{([^}]+)\}/g, '${$1}') + '`')
-    // def → function
-    .replace(/def (\w+)\((.*?)\):/g, 'function $1($2) {')
-    // elif → else if
-    .replace(/elif (.+?):/g, '} else if ($1) {')
-    // if/else/for/while colons
-    .replace(/^(\s*)if (.+?):$/gm, '$1if ($2) {')
-    .replace(/^(\s*)else:$/gm, '$1} else {')
-    .replace(/^(\s*)for (\w+) in (.+?):$/gm, (m, indent, v, iter) => {
-      return `${indent}for (let ${v} of ${iter}) {`;
-    })
-    .replace(/^(\s*)while (.+?):$/gm, '$1while ($2) {')
-    .replace(/^(\s*)return (.+)$/gm, '$1return $2;')
-    // string concatenation + to +
-    ;
+    .replace(/\bTrue\b/g,'true').replace(/\bFalse\b/g,'false').replace(/\bNone\b/g,'null')
+    .replace(/type\(([^)]+)\)/g,'__type($1)')
+    .replace(/len\(([^)]+)\)/g,'$1.length')
+    .replace(/(\w+)\.append\(([^)]+)\)/g,'$1.push($2)')
+    .replace(/(\w+)\.remove\(([^)]+)\)/g,'__removeItem($1,$2)')
+    .replace(/(\w+)\.upper\(\)/g,'$1.toUpperCase()')
+    .replace(/(\w+)\.lower\(\)/g,'$1.toLowerCase()')
+    .replace(/(\w+)\.strip\(\)/g,'$1.trim()')
+    .replace(/(\w+)\.replace\(([^)]+)\)/g,'$1.replace($2)')
+    .replace(/(\w+)\.keys\(\)/g,'Object.keys($1)')
+    .replace(/(\w+)\.values\(\)/g,'Object.values($1)')
+    .replace(/list\(([^)]+)\)/g,'Array.from($1)')
+    .replace(/range\((\d+),\s*(\d+),\s*(\d+)\)/g,'__range($1,$2,$3)')
+    .replace(/range\((\d+),\s*(\d+)\)/g,'__range($1,$2)')
+    .replace(/range\((\d+)\)/g,'__range(0,$1)')
+    .replace(/f"([^"]*)"/g,(m,s)=>'`'+s.replace(/\{([^}]+)\}/g,'${$1}')+'`')
+    .replace(/f'([^']*)'/g,(m,s)=>'`'+s.replace(/\{([^}]+)\}/g,'${$1}')+'`')
+    .replace(/def (\w+)\((.*?)\):/g,'function $1($2) {')
+    .replace(/elif (.+?):/g,'} else if ($1) {')
+    .replace(/^(\s*)if (.+?):$/gm,'$1if ($2) {')
+    .replace(/^(\s*)else:$/gm,'$1} else {')
+    .replace(/^(\s*)for (\w+) in (.+?):$/gm,'$1for (let $2 of $3) {')
+    .replace(/^(\s*)while (.+?):$/gm,'$1while ($2) {')
+    .replace(/^(\s*)try:$/gm,'$1try {')
+    .replace(/^(\s*)except \w+:$/gm,'$1} catch (e) {')
+    .replace(/^(\s*)except \w+ as \w+:$/gm,'$1} catch (e) {')
+    .replace(/^(\s*)except:$/gm,'$1} catch (e) {')
+    .replace(/^(\s*)finally:$/gm,'$1} finally {')
+    .replace(/^(\s*)return (.+)$/gm,'$1return $2;')
+    .replace(/\[(.+?) for (\w+) in (.+?) if (.+?)\]/g,(m,expr,v,iter,cond)=>
+      `Array.from(${iter}).filter(${v}=>${cond}).map(${v}=>${expr})`)
+    .replace(/\[(.+?) for (\w+) in (.+?)\]/g,(m,expr,v,iter)=>
+      `Array.from(${iter}).map(${v}=>${expr})`);
 
-  // Add closing braces by indentation
   js = addBraces(js);
-
   try {
-    const fn = new Function(
-      '__print', '__type', '__range', '__removeItem',
-      js
-    );
-    fn(
+    new Function('__print','__type','__range','__removeItem',js)(
       printFn,
-      (v) => {
-        if (typeof v === 'string') return "<class 'str'>";
-        if (typeof v === 'number') return Number.isInteger(v) ? "<class 'int'>" : "<class 'float'>";
-        if (typeof v === 'boolean') return "<class 'bool'>";
-        if (Array.isArray(v)) return "<class 'list'>";
-        if (typeof v === 'object') return "<class 'dict'>";
+      v => {
+        if(typeof v==='string') return "<class 'str'>";
+        if(typeof v==='number') return Number.isInteger(v)?"<class 'int'>":"<class 'float'>";
+        if(typeof v==='boolean') return "<class 'bool'>";
+        if(Array.isArray(v)) return "<class 'list'>";
+        if(typeof v==='object'&&v!==null) return "<class 'dict'>";
         return "<class 'unknown'>";
       },
-      (start, end, step = 1) => {
-        const arr = [];
-        for (let i = start; i < end; i += step) arr.push(i);
-        return arr;
-      },
-      (arr, val) => {
-        const idx = arr.indexOf(val);
-        if (idx !== -1) arr.splice(idx, 1);
-      }
+      (s,e,step=1)=>{const a=[];for(let i=s;i<e;i+=step)a.push(i);return a;},
+      (arr,val)=>{const i=arr.indexOf(val);if(i!==-1)arr.splice(i,1);}
     );
-    return { ok: true, lines: output };
-  } catch (e) {
-    return { ok: false, error: e.message };
-  }
+    return { ok:true, lines:output };
+  } catch(e) { return { ok:false, error:e.message }; }
 }
 
 function addBraces(code) {
-  const lines = code.split('\n');
-  const result = [];
-  const indentStack = [0];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trimStart();
-    if (!trimmed) { result.push(''); continue; }
-
-    const indent = line.length - trimmed.length;
-    const curTop = indentStack[indentStack.length - 1];
-
-    if (indent < curTop) {
-      while (indentStack.length > 1 && indentStack[indentStack.length - 1] > indent) {
-        indentStack.pop();
-        result.push(' '.repeat(indentStack[indentStack.length - 1]) + '}');
+  const lines=code.split('\n'),result=[],stack=[0];
+  for(const line of lines){
+    const trim=line.trimStart();
+    if(!trim){result.push('');continue;}
+    const indent=line.length-trim.length,top=stack[stack.length-1];
+    if(indent<top){
+      while(stack.length>1&&stack[stack.length-1]>indent){
+        stack.pop();result.push(' '.repeat(stack[stack.length-1])+'}');
       }
     }
-
-    if (trimmed.endsWith('{')) {
-      result.push(line);
-      indentStack.push(indent + 4);
-    } else {
-      result.push(line);
-    }
+    result.push(line);
+    if(trim.endsWith('{'))stack.push(indent+4);
   }
-
-  while (indentStack.length > 1) {
-    indentStack.pop();
-    result.push('}');
-  }
-
+  while(stack.length>1){stack.pop();result.push('}');}
   return result.join('\n');
 }
 
-// ── RENDER ─────────────────────────────────────────────────────
-function renderSidebar() {
-  const el = document.getElementById('lessonList');
-  el.innerHTML = lessons.map((l, i) => `
-    <button class="lesson-btn ${i === state.current ? 'active' : ''} ${state.done.has(i) ? 'done' : ''}"
-      onclick="goTo(${i})">
-      <span class="dot"></span>
-      <span>${i + 1}. ${l.title}</span>
-    </button>
-  `).join('');
+function groupBy(arr,key){
+  return arr.reduce((g,l,i)=>{ (g[l[key]]=g[l[key]]||[]).push({...l,idx:i}); return g; },{});
 }
 
-function renderLesson(idx) {
-  const l = lessons[idx];
-  state.quizAnswered = false;
+function renderSidebar(){
+  const groups=groupBy(lessons,'tag');
+  document.getElementById('sidebar').innerHTML=Object.entries(groups).map(([tag,ls])=>`
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">${tag}</div>
+      ${ls.map(l=>`
+        <button class="lesson-btn ${l.idx===state.current?'active':''} ${state.done.has(l.idx)?'done':''}"
+          onclick="goTo(${l.idx})">
+          <span class="lesson-num">${String(l.idx+1).padStart(2,'0')}</span>
+          <span>${l.title}</span>
+          <span class="lesson-check">✓</span>
+        </button>`).join('')}
+    </div>`).join('');
+}
 
-  document.getElementById('mainContent').innerHTML = `
-    <div class="lesson-header">
-      <div class="lesson-title">${l.title}</div>
-      <span class="lesson-tag">${l.tag}</span>
-    </div>
-
+function renderLesson(idx){
+  const l=lessons[idx]; state.quizAnswered=false;
+  document.getElementById('mainContent').innerHTML=`
+    <span class="lesson-tag">${l.tag}</span>
+    <div class="lesson-title">${l.title}</div>
+    <div class="lesson-desc">${l.desc}</div>
     <div class="explain-card">
-      <h4>📖 Concept</h4>
+      <div class="section-label">Concept</div>
       ${l.explain}
     </div>
-
     <div class="editor-wrap">
       <div class="editor-topbar">
-        <div class="editor-dots">
-          <span></span><span></span><span></span>
-        </div>
-        <span class="editor-label">main.py</span>
+        <div class="editor-dots"><span></span><span></span><span></span></div>
+        <span class="editor-filename">main.py</span>
         <div class="editor-btn-group">
           <button class="btn btn-reset" onclick="resetCode(${idx})">↺ Reset</button>
           <button class="btn btn-run" onclick="runCode(${idx})">▶ Run</button>
@@ -693,139 +468,97 @@ function renderLesson(idx) {
       </div>
       <textarea class="code-area" id="codeArea" spellcheck="false">${l.starter}</textarea>
     </div>
-
-    <div class="output-panel" id="outputPanel">
+    <div class="output-panel">
       <div class="out-label">Output</div>
       <div class="out-pending" id="outputText">Click ▶ Run to execute your code...</div>
     </div>
-
     <div class="quiz-section">
-      <h4>🧠 Quick Quiz</h4>
+      <div class="section-label">Quick Quiz</div>
       <div class="quiz-q">${l.quiz.q}</div>
-      <div class="quiz-options" id="quizOpts">
-        ${l.quiz.opts.map((o, i) => `
-          <button class="quiz-opt" onclick="answerQuiz(${idx}, ${i})">${o}</button>
-        `).join('')}
+      <div class="quiz-options">
+        ${l.quiz.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${idx},${i})">${o}</button>`).join('')}
       </div>
       <div class="quiz-feedback" id="quizFeedback"></div>
     </div>
-
     <button class="btn-next" id="btnNext" onclick="nextLesson()" disabled>
-      ${idx < lessons.length - 1 ? 'Next Lesson →' : '🎉 Finish Course'}
-    </button>
-  `;
+      ${idx<lessons.length-1?'Next lesson →':'🎉 Finish course'}
+    </button>`;
 }
 
-function runCode(idx) {
-  const code = document.getElementById('codeArea').value;
-  const result = runPython(code);
-  const outText = document.getElementById('outputText');
+function runCode(idx){
+  const result=runPython(document.getElementById('codeArea').value);
+  const el=document.getElementById('outputText');
+  if(result.ok){
+    el.className='out-success';
+    el.innerHTML=result.lines.length?result.lines.map(esc).join('<br>'):'<span style="color:var(--muted)">No output.</span>';
+    checkMatch(idx,result.lines);
+  } else { el.className='out-error'; el.textContent='⚠ '+result.error; }
+}
 
-  if (result.ok) {
-    outText.className = 'out-success';
-    outText.innerHTML = result.lines.length
-      ? result.lines.map(l => escHtml(l)).join('<br>')
-      : '<span style="color:var(--muted)">No output.</span>';
-    checkOutputMatch(idx, result.lines);
-  } else {
-    outText.className = 'out-error';
-    outText.textContent = '⚠ Error: ' + result.error;
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function checkMatch(idx,lines){
+  const exp=lessons[idx].expected;
+  if(exp.every((e,i)=>lines[i]&&lines[i].trim()===e.trim())){
+    state.done.add(idx); updateProgress(); renderSidebar(); checkNext();
+    document.getElementById('outputText').innerHTML+=
+      '<br><br><span style="color:var(--accent);font-family:var(--font-sans)">✓ Output matches! Well done.</span>';
   }
 }
 
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function resetCode(idx){
+  document.getElementById('codeArea').value=lessons[idx].starter;
+  const el=document.getElementById('outputText');
+  el.className='out-pending'; el.textContent='Click ▶ Run to execute your code...';
 }
 
-function checkOutputMatch(idx, lines) {
-  const expected = lessons[idx].expected;
-  const match = expected.every((e, i) => lines[i] && lines[i].trim() === e.trim());
-  if (match) {
-    state.done.add(idx);
-    updateProgress();
-    renderSidebar();
-    checkNextEnabled();
-    const outText = document.getElementById('outputText');
-    outText.innerHTML += '<br><br><span style="color:var(--green)">✅ Output matches! Great job!</span>';
-  }
-}
-
-function resetCode(idx) {
-  document.getElementById('codeArea').value = lessons[idx].starter;
-  document.getElementById('outputText').className = 'out-pending';
-  document.getElementById('outputText').textContent = 'Click ▶ Run to execute your code...';
-}
-
-function answerQuiz(lessonIdx, optIdx) {
-  if (state.quizAnswered) return;
-  state.quizAnswered = true;
-  const quiz = lessons[lessonIdx].quiz;
-  const opts = document.querySelectorAll('.quiz-opt');
-  const fb = document.getElementById('quizFeedback');
-
-  opts.forEach((o, i) => {
-    o.disabled = true;
-    if (i === quiz.ans) o.classList.add('correct');
-    else if (i === optIdx) o.classList.add('wrong');
+function answerQuiz(li,oi){
+  if(state.quizAnswered)return; state.quizAnswered=true;
+  const quiz=lessons[li].quiz;
+  document.querySelectorAll('.quiz-opt').forEach((o,i)=>{
+    o.disabled=true;
+    if(i===quiz.ans)o.classList.add('correct');
+    else if(i===oi)o.classList.add('wrong');
   });
-
-  if (optIdx === quiz.ans) {
-    fb.style.color = 'var(--green)';
-    fb.textContent = quiz.feedback;
-    state.done.add(lessonIdx);
-    updateProgress();
-    renderSidebar();
-  } else {
-    fb.style.color = '#f87171';
-    fb.textContent = quiz.wrong;
-  }
-  checkNextEnabled();
+  const fb=document.getElementById('quizFeedback');
+  if(oi===quiz.ans){
+    fb.style.color='var(--accent)'; fb.textContent=quiz.feedback;
+    state.done.add(li); updateProgress(); renderSidebar();
+  } else { fb.style.color='var(--red)'; fb.textContent=quiz.wrong; }
+  checkNext();
 }
 
-function checkNextEnabled() {
-  const btn = document.getElementById('btnNext');
-  if (btn && state.done.has(state.current)) btn.disabled = false;
+function checkNext(){ const b=document.getElementById('btnNext'); if(b&&state.done.has(state.current))b.disabled=false; }
+
+function nextLesson(){
+  if(state.current<lessons.length-1){ state.current++; renderLesson(state.current); renderSidebar(); window.scrollTo({top:0,behavior:'smooth'}); }
+  else showCongrats();
 }
 
-function nextLesson() {
-  if (state.current < lessons.length - 1) {
-    state.current++;
-    renderLesson(state.current);
-    renderSidebar();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    showCongrats();
-  }
+function goTo(idx){ state.current=idx; renderLesson(idx); renderSidebar(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function updateProgress(){
+  const pct=(state.done.size/lessons.length)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=`${state.done.size} / ${lessons.length}`;
 }
 
-function goTo(idx) {
-  state.current = idx;
-  renderLesson(idx);
-  renderSidebar();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function updateProgress() {
-  const pct = (state.done.size / lessons.length) * 100;
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent =
-    `${state.done.size} / ${lessons.length} lessons completed`;
-}
-
-function showCongrats() {
-  document.getElementById('mainContent').innerHTML = `
-    <div class="congrats show">
+function showCongrats(){
+  document.getElementById('mainContent').innerHTML=`
+    <div class="congrats">
       <div class="trophy">🏆</div>
-      <h2>Course Complete!</h2>
-      <p>You've finished all 8 Python lessons.<br>
-      You now know variables, data types, control flow, loops, functions, lists, and dictionaries.</p>
+      <h2>Course complete!</h2>
+      <p>You've finished all ${lessons.length} Python lessons.<br>You now know the core fundamentals of Python.</p>
       <br>
-      <button class="btn-next" onclick="goTo(0)">🔄 Start Over</button>
-    </div>
-  `;
+      <div class="congrats-stats">
+        <div class="congrats-stat"><div class="congrats-stat-n">${lessons.length}</div><div class="congrats-stat-l">lessons done</div></div>
+        <div class="congrats-stat"><div class="congrats-stat-n">${state.done.size}</div><div class="congrats-stat-l">completed</div></div>
+      </div>
+      <br>
+      <button class="btn-next" onclick="goTo(0)">↺ Start over</button>
+    </div>`;
 }
 
-// ── INIT ───────────────────────────────────────────────────────
 renderSidebar();
 renderLesson(0);
 </script>
